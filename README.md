@@ -1,39 +1,60 @@
-CHANGES MADE:  
+Overview
+This project is a React Native application designed for managing a restaurant menu. It includes features for adding dishes, filtering menu items, and viewing the menu with real-time calculations like the average price of items.
 
-1. Type Definition for Menu Items: 
+Screens
+  1. HomeScreen
+    Purpose: Acts as the main dashboard for the menu management system.
+    Key Features:
+      Displays the list of menu items.
+      Allows navigation to AddMenuScreen and FilterMenuScreen.
+      Calculates and displays the average price of menu items.
+      Supports the removal of menu items with confirmation.
+    Components:
+      FlatList for displaying menu items.
+      Dynamic calculations for total items and average price.
+    Navigation:
+      Navigates to the AddMenuScreen for adding new items.
+      Navigates to the FilterMenuScreen for filtering menu items by course.
 
-Introduced a ‘MenuItem’ type to clearly define the structure of menu items. This type includes properties like ‘id’, ‘dishName’, ‘description’, ‘price’, and ‘course’. Defining a type ensures that all menu items adhere to this structure, providing better type safety and making it easier to catch errors during development. It also enhances code readability, as developers can quickly understand the expected shape of the data being used in the component. 
+  2. AddMenuScreen
+    Purpose: Enables users to add new dishes to the menu.
+    Key Features:
+      Input fields for dish name, description, price, and course selection.
+      Utilizes Picker for selecting a course (e.g., Starters, Mains, Desserts).
+      Sends newly created items back to the HomeScreen using navigation parameters.
+    Components:
+      Form with text inputs and a picker.
+      Validations for numeric input (price).
 
+  3. FilterMenuScreen
+    Purpose: Provides functionality to filter the menu items based on the course type.
+    Key Features:
+      Buttons to filter menu items by categories such as Appetizers, Mains, and Desserts.
+      Clear filter option to reset the menu to its original state.
+    Components:
+      FlatList for filtered menu items.
+      State management with useState and useEffect.
+
+Folder Structure:
+  screens/: Contains all the screen components for the app.
+  HomeScreen.tsx: The main screen for viewing and managing the menu.
+  AddMenuScreen.tsx: A form-based screen for adding new menu items.
+  FilterMenuScreen.tsx: A screen for filtering menu items based on their course.
+
+Navigation:
+  The app uses React Navigation's Native Stack Navigator for seamless transitions between screens.
+  Features
+    Add, filter, and view menu items.
+    Real-time average price calculation.
+    Smooth navigation between screens.
   
+Technologies Used:
+  React Native: Framework for building the mobile application.
+  React Navigation: Library for screen navigation.
+  React Native Picker: Dropdown menu for course selection.
 
-2. Use of ‘useEffect’ for Initial State: 
-
-Implemented the ‘useEffect’ hook to update the state of ‘filteredItems’ whenever ‘menuItems’ changes. Initially, ‘filteredItems’ is set to the value of ‘menuItems’. However, by using ‘useEffect’, we ensure that if ‘menuItems’ updates (for example, if the user navigates back to this screen and passes a new set of menu items), ‘filteredItems’ will also be updated to reflect this new data. This prevents stale data from being displayed and keeps the UI in sync with the data being passed through navigation. 
-
-  
-
-3. Improvement to Key Extractor: 
-
-Changed the key extractor in the ‘FlatList’ component from using the index to using a unique ‘id’ property of each item. Using the index as a key can lead to performance issues and bugs when the list changes (e.g., items are added, removed, or reordered). Instead, using a unique identifier (like ‘item.id’) helps React optimize rendering and maintain the component’s state accurately across re-renders. This is particularly important in larger lists where maintaining state consistency is crucial. 
-
-  
-
-4. Optional Chaining for Rendering: 
-
-Applied optional chaining when accessing item properties. This prevents potential runtime errors that can occur if any of the properties (e.g., ‘dishName’, ‘description’, or ‘price’) are undefined. By using optional chaining (e.g., ‘item?.dishName’), the code gracefully handles scenarios where an item might not contain the expected properties, thus enhancing the robustness of the application. 
-
-  
-
-5. Improved Button Accessibility: 
-
-Added accessibility labels to the buttons in the filter menu. Accessibility labels provide context for screen readers, which is essential for users with visual impairments. By adding descriptive labels such as "Show Appetizers", "Show Main Dishes", and "Show Desserts", we ensure that all users can understand the purpose of each button, thereby improving overall accessibility and usability of the application. 
-
-  
-
-These enhancements collectively improve the component’s maintainability, performance, and user experience, making it more robust and user-friendly. By adopting best practices such as type definitions, state synchronization with ‘useEffect’, and accessibility considerations, the code is now better suited for production environments. 
-
- 
-
-6. UI Improvement: 
-
-I made slight modifications to the code to achieve a cleaner and more minimalist design. These changes included adjustments to headings and the color scheme of the page. I opted for soothing, pastel tones to ensure a calming aesthetic, avoiding harsh contrasts between colors for a more visually pleasing experience. 
+Future Improvements:
+  Add validation for all input fields.
+  Improve the UI design with additional styling.
+  Integrate persistent storage to save menu items.
+  Add unit tests for components.
