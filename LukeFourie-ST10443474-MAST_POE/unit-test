@@ -1,0 +1,96 @@
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import HomeScreen from '../HomeScreen';
+import AddMenuScreen from '../AddMenuScreen';
+import FilterMenuScreen from '../FilterMenuScreen';
+
+describe('HomeScreen', () => {
+  it('renders the HomeScreen correctly', () => {
+    const { getByText } = render(<HomeScreen navigation={{ navigate: jest.fn() }} route={{ params: {} }} />);
+    expect(getByText('Menu')).toBeTruthy();
+    expect(getByText('Add Menu')).toBeTruthy();
+    expect(getByText('Filter Menu')).toBeTruthy();
+  });
+
+  it('navigates to AddMenuScreen when "Add Menu" button is pressed', () => {
+    const navigateMock = jest.fn();
+    const { getByText } = render(<HomeScreen navigation={{ navigate: navigateMock }} route={{ params: {} }} />);
+
+    fireEvent.press(getByText('Add Menu'));
+    expect(navigateMock).toHaveBeenCalledWith('AddMenu');
+  });
+
+  it('navigates to FilterMenuScreen with menuItems when "Filter Menu" button is pressed', () => {
+    const navigateMock = jest.fn();
+    const menuItems = [{ dishName: 'Pasta', description: 'Delicious', course: 'Main', price: 12.5 }];
+    const { getByText } = render(<HomeScreen navigation={{ navigate: navigateMock }} route={{ params: {} }} />);
+    fireEvent.press(getByText('Filter Menu'));
+    expect(navigateMock).toHaveBeenCalledWith('FilterMenu', { menuItems: [] });
+  });
+});
+
+describe('AddMenuScreen', () => {
+  it('renders the AddMenuScreen correctly', () => {
+    const { getByText, getByPlaceholderText } = render(<AddMenuScreen navigation={{ navigate: jest.fn() }} />);
+    expect(getByText('Dish Name:')).toBeTruthy();
+    expect(getByText('Description:')).toBeTruthy();
+    expect(getByText('Course:')).toBeTruthy();
+    expect(getByText('Price:')).toBeTruthy();
+    expect(getByText('Add Dish')).toBeTruthy();
+  });
+
+  it('submits the form and navigates back to HomeScreen with new item', () => {
+    const navigateMock = jest.fn();
+    const { getByText, getByPlaceholderText, getByDisplayValue } = render(
+      <AddMenuScreen navigation={{ navigate: navigateMock }} />
+    );
+
+    fireEvent.changeText(getByPlaceholderText('Dish Name'), 'Pizza');
+    fireEvent.changeText(getByPlaceholderText('Description'), 'Cheesy and delicious');
+    fireEvent.changeText(getByPlaceholderText('Price'), '9.99');
+    fireEvent.press(getByText('Add Dish'));
+
+    expect(navigateMock).toHaveBeenCalledWith('Home', {
+      newItem: {
+        dishName: 'Pizza',
+        description: 'Cheesy and delicious',
+        course: 'Starters', // Default course value
+        price: 9.99,
+      },
+    });
+  });
+});
+
+describe('FilterMenuScreen', () => {
+  const menuItems = [
+    { id: '1', dishName: 'Salad', description: 'Fresh', price: 5.99, course: 'Appetizer' },
+    { id: '2', dishName: 'Steak', description: 'Juicy', price: 15.99, course: 'Main' },
+    { id: '3', dishName: 'Cake', description: 'Sweet', price: 6.99, course: 'Dessert' },
+  ];
+
+  it('renders the FilterMenuScreen correctly', () => {
+    const { getByText } = render(
+      <FilterMenuScreen route={{ params: { menuItems } }} navigation={{ navigate: jest.fn() }} />
+    );
+
+    expect(getByText('Menu')).toBeTruthy();
+    expect(getByText('Appetizers')).toBeTruthy();
+    expect(getByText('Mains')).toBeTruthy();
+    expect(getByText('Desserts')).toBeTruthy();
+  });
+
+  it('filters menu items by course', () => {
+    const { getByText, queryByText } = render(
+      <FilterMenuScreen route={{ params: { menuItems } }} navigation={{ navigate: jest.fn() }} />
+    );
+
+    fireEvent.press(getByText('Appetizers'));
+    expect(getByText('Salad')).toBeTruthy();
+    expect(queryByText('Steak')).toBeNull();
+    expect(queryByText('Cake')).toBeNull();
+
+    fireEvent.press(getByText('Clear Menu'));
+    expect(getByText('Steak')).toBeTruthy();
+    expect(getByText('Cake')).toBeTruthy();
+  });
+});
